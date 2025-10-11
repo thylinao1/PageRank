@@ -10,10 +10,10 @@ Includes:
      - If not, we print the expected array from the worksheet so you can compare.
 
 Why this converges (short sketch):
-  - If M is diagonalizable, write M = C D C^{-1} with eigenvalues on D's diagonal.
+  - If M is diagonalizable, write M = C D C^{-1} with eigenvalues on D's diagonal (C - eigenbasis matrix, D - diagonal matrix of eigenvalues, C^{-1} - inverse of the eigenvector matrix)
   - For PageRank, the relevant matrix is the Google matrix M = d L + (1-d)/n 11^T.
   - The top eigenvalue is λ₁ = 1 (Perron); all others satisfy |λ_i| ≤ d < 1 when 0<d<1.
-  - Then M^k = C D^k C^{-1} → C diag(1,0,...,0) C^{-1}: a projector onto the Perron eigenvector v.
+  - Then M^k = C D^k C^{-1} → C * diag(1,0,...,0) * C^{-1}: a projector onto the Perron eigenvector v (as λ_i where i!=1 lim -> 0 as k lim->inf)
   - Power iteration r_{k+1} = M r_k therefore converges to v (up to scaling). For d=1, convergence
     depends on L (it still works in the supplied worksheet setup).
 """
@@ -23,26 +23,17 @@ import numpy.linalg as la
 
 
 # ---------------------------------------------------------------
-# GRADED FUNCTION
-# Complete this function to provide the PageRank for an arbitrarily sized internet.
-# I.e. the principal eigenvector of the damped system, using the power iteration method.
-# (Normalisation doesn't matter here)
-# The functions inputs are the linkMatrix, and d the damping parameter - as defined in this worksheet.
-# (The damping parameter, d, will be set by the function - no need to set this yourself.)
 def pageRank(linkMatrix, d) :
     n = linkMatrix.shape[0]
-    # Start from a uniform ranking that sums to 100 (worksheet convention)
+    # Start from a uniform ranking that sums to 100 
     r = 100 * np.ones(n) / n
 
-    # Google/transition matrix for the damped random surfer
-    # (For d=1, this reduces to the provided linkMatrix.)
     M = d * linkMatrix + (1-d)/n * np.ones([n,n])
 
-    # First step
     lastR = r
     r = M @ r
 
-    # Iterate until change is small in 2-norm (worksheet uses 0.01 threshold)
+    # Iterate until change is small in 2-norm 
     while la.norm(lastR - r) > 0.01:
         lastR = r
         r = M @ r
@@ -50,13 +41,8 @@ def pageRank(linkMatrix, d) :
     return r
 # ---------------------------------------------------------------
 
-
-# ---------------------------------------------------------------
-# Alternative (reference only): principal eigenvector approach on L
-# NOTE: This is dense and returns a vector that we then normalise to sum to 100
-# to match the worksheet's display convention.
-
-def pagerank_via_eig(L):
+#Alternative (reference only): principal eigenvector approach on L
+de pagerank_via_eig(L):
     eVals, eVecs = la.eig(L)  # Gets the eigenvalues and vectors
     order = np.absolute(eVals).argsort()[::-1]  # Orders them by their eigenvalues (magnitude)
     eVals = eVals[order]
@@ -67,23 +53,21 @@ def pagerank_via_eig(L):
     return r
 # ---------------------------------------------------------------
 
-
 # ---------------------------------------------------------------
-# TEST HARNESS (exactly as you requested)
+# TEST  
 # L = generate_internet(50)
 # pageRank(L, 1)
 # ---------------------------------------------------------------
 if __name__ == "__main__":
     try:
-        # Your worksheet should provide this function.
-        L = generate_internet(50)  # noqa: F821 (provided in the worksheet environment)
+        L = generate_internet(50) #  returns an n×n column-stochastic link matrix L where L[i,j] is the probability of moving from page j to page i. (at the bottom more info)
         print("Power method, d=1:")
         print(pageRank(L, 1))
         print("
 Eigen (reference on L), scaled to sum to 100:")
         print(pagerank_via_eig(L))
     except NameError:
-        # If run outside the worksheet, show the expected array for your reference.
+        # The expected array for your reference.
         print("Note: 'generate_internet' was not found. In your worksheet, it will be provided.")
         print("Expected output for pageRank(L, 1) with L = generate_internet(50):")
         expected = np.array([
@@ -106,3 +90,20 @@ Eigen (reference on L), scaled to sum to 100:")
         # Also show why power iteration converges: if M=C D C^{-1}, then M^k r0 → const * v (Perron)
         print("
 Sketch: If M=C D C^{-1} with λ₁=1, |λ_i|<1 for i>1, then M^k=C D^k C^{-1} → projector onto v.")
+**
+# ---------------------------------------------------------------------
+# About `generate_internet` (provided by the worksheet):
+#
+# - Purpose: returns a synthetic “internet” of size n as a link matrix L.
+# - Shape: L is n x n (square).
+# - Meaning: columns are source pages; L[i, j] is the probability of moving
+#   from page j to page i (i.e., each column lists outgoing-link probabilities).
+# - Stochasticity: each column of L sums to 1 (within numerical tolerance).
+# - Dangling pages: any page with no out-links is handled in the worksheet
+#   (typically by assigning a uniform 1/n distribution for that column),
+#   so L remains column-stochastic.
+# - Usage here: when d = 1 we iterate with M = L; for 0 < d < 1 we form the
+#   damped Google matrix M = d*L + (1-d)/n * 11^T before power iteration.
+# - Display convention: we scale the final rank vector so its entries sum to
+#   ~100, matching the worksheet’s expected output format.
+# ---------------------------------------------------------------------
