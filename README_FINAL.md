@@ -422,9 +422,6 @@ Contributions welcome! Areas for improvement:
 ## 📧 Contact
 
 **Maksim Silchenko**  
-📧 Email: [your-email@example.com]  
-🔗 LinkedIn: [linkedin.com/in/maksim-silchenko](https://linkedin.com/in/maksim-silchenko)  
-💻 GitHub: [github.com/thylinao1](https://github.com/thylinao1)
 
 ---
 
@@ -443,22 +440,5 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-## 📊 Citation
-
-If you use this code in academic work, please cite:
-
-```bibtex
-@misc{silchenko2025pagerank,
-  author = {Silchenko, Maksim},
-  title = {PageRank: Eigenvector Centrality via Markov Chains},
-  year = {2025},
-  publisher = {GitHub},
-  url = {https://github.com/thylinao1/PageRank}
-}
 ```
 
----
-
-**⭐ If you found this useful, please star the repo!**
-
-**💡 Questions? Open an issue or reach out directly.**
